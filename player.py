@@ -25,9 +25,29 @@ class Hand:
 
 
 class Player:
-    def __init__(self, name):
+    def __init__(self, name, chips=1000):
         self.name = name
         self.hand = Hand()
+        self.chips = chips
+        self.bet = 0
+
+    def place_bet(self, amount):
+        if amount <= 0 or amount > self.chips:
+            raise ValueError(f"無効なベット額です（所持チップ: {self.chips}）")
+        self.bet = amount
+        self.chips -= amount
+
+    def win(self):
+        self.chips += self.bet * 2
+
+    def win_blackjack(self):
+        # ブラックジャック時は1.5倍（端数は切り捨て）
+        self.chips += self.bet + int(self.bet * 1.5)
+
+    def push(self):
+        # 引き分けはベット返却
+        self.chips += self.bet
 
     def clear_hand(self):
         self.hand = Hand()
+        self.bet = 0

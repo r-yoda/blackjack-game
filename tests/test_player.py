@@ -64,12 +64,50 @@ class TestHand:
 
 
 class TestPlayer:
-    def test_player_name(self):
+    def test_player_initial_chips(self):
         player = Player("テスト")
-        assert player.name == "テスト"
+        assert player.chips == 1000
+
+    def test_player_custom_chips(self):
+        player = Player("テスト", chips=500)
+        assert player.chips == 500
+
+    def test_place_bet(self):
+        player = Player("テスト", chips=1000)
+        player.place_bet(200)
+        assert player.bet == 200
+        assert player.chips == 800
+
+    def test_place_bet_invalid(self):
+        player = Player("テスト", chips=1000)
+        with pytest.raises(ValueError):
+            player.place_bet(0)
+        with pytest.raises(ValueError):
+            player.place_bet(1001)
+
+    def test_win(self):
+        player = Player("テスト", chips=800)
+        player.bet = 200
+        player.win()
+        assert player.chips == 1200
+
+    def test_win_blackjack(self):
+        player = Player("テスト", chips=800)
+        player.bet = 200
+        player.win_blackjack()
+        # 800 + 200 + 300 = 1300
+        assert player.chips == 1300
+
+    def test_push(self):
+        player = Player("テスト", chips=800)
+        player.bet = 200
+        player.push()
+        assert player.chips == 1000
 
     def test_clear_hand(self):
         player = Player("テスト")
         player.hand.add_card(Card('♠', 'A'))
+        player.bet = 100
         player.clear_hand()
         assert len(player.hand.cards) == 0
+        assert player.bet == 0
