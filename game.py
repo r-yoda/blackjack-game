@@ -9,6 +9,7 @@ class Game:
         self.dealer = Player("ディーラー")
         self.wins = 0
         self.losses = 0
+        self.high_score = 1000
 
     def ask_bet(self):
         print(f"\n所持チップ: {self.player.chips}")
@@ -89,7 +90,10 @@ class Game:
             print("引き分けです！")
             self.player.push()
 
-        print(f"所持チップ: {self.player.chips}  (戦績: {self.wins}勝 {self.losses}敗)")
+        if self.player.chips > self.high_score:
+            self.high_score = self.player.chips
+            print(f"★ハイスコア更新！ {self.high_score} チップ")
+        print(f"所持チップ: {self.player.chips}  (戦績: {self.wins}勝 {self.losses}敗 / ハイスコア: {self.high_score})")
 
     def reset(self):
         self.player.clear_hand()
