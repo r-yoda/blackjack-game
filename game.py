@@ -5,8 +5,18 @@ from player import Player
 class Game:
     def __init__(self):
         self.deck = Deck()
-        self.player = Player("プレイヤー")
+        self.player = Player("プレイヤー", chips=1000)
         self.dealer = Player("ディーラー")
+
+    def ask_bet(self):
+        print(f"\n所持チップ: {self.player.chips}")
+        while True:
+            try:
+                amount = int(input("ベット額を入力してください: "))
+                self.player.place_bet(amount)
+                break
+            except (ValueError, TypeError):
+                print(f"1〜{self.player.chips} の数値を入力してください")
 
     def deal_initial(self):
         for _ in range(2):
@@ -57,14 +67,22 @@ class Game:
 
         if self.player.hand.is_bust():
             print("あなたの負けです！")
+        elif self.player.hand.is_blackjack() and not self.dealer.hand.is_blackjack():
+            print("ブラックジャック！1.5倍獲得！")
+            self.player.win_blackjack()
         elif self.dealer.hand.is_bust():
             print("ディーラーがバスト！あなたの勝ちです！")
+            self.player.win()
         elif player_total > dealer_total:
             print("あなたの勝ちです！")
+            self.player.win()
         elif player_total < dealer_total:
             print("ディーラーの勝ちです！")
         else:
             print("引き分けです！")
+            self.player.push()
+
+        print(f"所持チップ: {self.player.chips}")
 
     def reset(self):
         self.player.clear_hand()
@@ -76,6 +94,11 @@ class Game:
     def play(self):
         print("=== ブラックジャック ===")
 
+        if self.player.chips <= 0:
+            print("チップがなくなりました。ゲームオーバー！")
+            return
+
+        self.ask_bet()
         self.deal_initial()
         player_ok = self.player_turn()
 
