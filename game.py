@@ -7,6 +7,8 @@ class Game:
         self.deck = Deck()
         self.player = Player("プレイヤー", chips=1000)
         self.dealer = Player("ディーラー")
+        self.wins = 0
+        self.losses = 0
         self.high_score = 1000
 
     def ask_bet(self):
@@ -68,17 +70,22 @@ class Game:
 
         if self.player.hand.is_bust():
             print("あなたの負けです！")
+            self.losses += 1
         elif self.player.hand.is_blackjack() and not self.dealer.hand.is_blackjack():
             print("ブラックジャック！1.5倍獲得！")
             self.player.win_blackjack()
+            self.wins += 1
         elif self.dealer.hand.is_bust():
             print("ディーラーがバスト！あなたの勝ちです！")
             self.player.win()
+            self.wins += 1
         elif player_total > dealer_total:
             print("あなたの勝ちです！")
             self.player.win()
+            self.wins += 1
         elif player_total < dealer_total:
             print("ディーラーの勝ちです！")
+            self.losses += 1
         else:
             print("引き分けです！")
             self.player.push()
@@ -86,7 +93,7 @@ class Game:
         if self.player.chips > self.high_score:
             self.high_score = self.player.chips
             print(f"★ハイスコア更新！ {self.high_score} チップ")
-        print(f"所持チップ: {self.player.chips}  (ハイスコア: {self.high_score})")
+        print(f"所持チップ: {self.player.chips}  (戦績: {self.wins}勝 {self.losses}敗 / ハイスコア: {self.high_score})")
 
     def reset(self):
         self.player.clear_hand()
