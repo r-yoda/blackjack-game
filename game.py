@@ -15,8 +15,8 @@ class Game:
                 amount = int(input("ベット額を入力してください: "))
                 self.player.place_bet(amount)
                 break
-            except (ValueError, TypeError):
-                print(f"1〜{self.player.chips} の数値を入力してください")
+            except ValueError as e:
+                print(e)
 
     def deal_initial(self):
         for _ in range(2):
